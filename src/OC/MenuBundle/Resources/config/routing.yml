@@ -1,0 +1,28 @@
+oc_menu_web_blog:
+    path:      /web_blog
+    defaults:  { _controller: OCMenuBundle:Default:web_blogs }
+
+oc_menu_web_design:
+    path:      /web_social
+    defaults:  { _controller: OCMenuBundle:Default:web_social }
+
+oc_menu_design_graphic:
+    path:      /design_graphic
+    defaults:  { _controller: OCMenuBundle:Default:design_graphic }
+
+oc_menu_design_illustration:
+    path:      /design_illustration
+    defaults:  { _controller: OCMenuBundle:Default:design_illustration }
+
+oc_menu_design_photo:
+    path:      /design_photo
+    defaults:  { _controller: OCMenuBundle:Default:design_photo }
+
+oc_menu_contact:
+    path:      /contact
+    defaults:  { _controller: OCMenuBundle:Default:contact }
+
+oc_menu_about_us:
+    path:      /about_us
+    defaults:  { _controller: OCMenuBundle:Default:about }
+

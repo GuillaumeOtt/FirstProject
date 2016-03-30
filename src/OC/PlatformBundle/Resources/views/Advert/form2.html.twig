@@ -1,0 +1,355 @@
+{# src/OC/PlatformBundle/Resources/views/Advert/form.html.twig #}
+
+
+<h3>Formulaire d'annonce</h3>
+<br>
+</br>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+
+    //IMAGE
+
+    var allowedTypes = ['png', 'jpg', 'jpeg', 'gif'],
+        fileInput = document.querySelector('#oc_platformbundle_advert_imageheader_file'),
+        prev = document.querySelector('#le_up_prev');
+
+    fileInput.addEventListener('change', function() {
+
+      $('#le_up_prev').show();
+        var files = this.files,
+            filesLen = files.length,
+            imgType;
+
+        for (var i = 0; i < filesLen; i++) {
+
+            imgType = files[i].name.split('.');
+            imgType = imgType[imgType.length - 1];
+
+            if (allowedTypes.indexOf(imgType) != -1) {
+                createThumbnail(files[i],prev);
+            }
+
+        }
+
+    });
+
+    // On récupère la balise <div> en question qui contient l'attribut « data-prototype » qui nous intéresse.
+    var $container_image = $('div#oc_platformbundle_advert_imagecontents');
+
+    // On ajoute un lien pour ajouter une nouvelle catégorie
+    var $add_imageLink = $('<a href="#" id="add_image" class="btn btn-default">Add image</a>');
+    $container_image.append($add_imageLink);
+
+    // On ajoute un nouveau champ à chaque clic sur le lien d'ajout.
+    $add_imageLink.click(function(e) {
+      addImage($container_image);
+      e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+      return false;
+    });
+
+    // On définit un compteur unique pour nommer les champs qu'on va ajouter dynamiquement
+    var index_image = $container_image.find(':input').length;
+
+    // On ajoute un premier champ automatiquement s'il n'en existe pas déjà un (cas d'une nouvelle annonce par exemple).
+    if (index_image == 0){
+      addImage($container_image);
+    } 
+    else 
+    {
+      // Pour chaque image déjà existante, on ajoute un lien de suppression
+      $container_image.children('div').each(function() {
+        addDelete_imageLink($(this));
+      });
+    }
+
+
+    function createThumbnail(file, $lelem) {
+
+        var reader = new FileReader();
+
+        reader.addEventListener('load', function() {
+
+            var imgElement = document.createElement('img');
+            imgElement.class = 'le_preview'
+            imgElement.src = this.result;
+            $lelem.src = reader.result;
+
+        });
+
+        reader.readAsDataURL(file);
+
+    }
+
+    // La fonction qui ajoute un formulaire Image
+    function addImage($container_image) {
+      // Dans le contenu de l'attribut « data-prototype », on remplace :
+      // - le texte "__name__label__" qu'il contient par le label du champ
+      // - le texte "__name__" qu'il contient par le numéro du champ
+  
+      var $prototype_image = $($container_image.attr('data-prototype').replace(/__name__label__/g, 'Image n°' + (index_image))
+          .replace(/__name__/g, index_image));
+
+      // On ajoute un lien pour ajouter une nouvelle catégorie
+      var $add_imageLink = $('<a href="#" id="add_image" class="btn btn-default">Add image</a>');
+      //$container_image.append($add_imageLink);
+
+     // On ajoute au prototype un lien pour pouvoir supprimer la catégorie
+
+      addPreview_imageLink($prototype_image);
+
+      addDelete_imageLink($prototype_image);
+      // On ajoute le prototype modifié à la fin de la balise <div>
+      $container_image.append($prototype_image);
+
+      $('#oc_platformbundle_advert_imagecontents_' + (index_image) + '_startX').parent().hide();
+      $('#oc_platformbundle_advert_imagecontents_' + (index_image) + '_startY').parent().hide();
+      $('#oc_platformbundle_advert_imagecontents_' + (index_image) + '_sizeX').parent().hide();
+      $('#oc_platformbundle_advert_imagecontents_' + (index_image) + '_sizeY').parent().hide();
+      
+      $('#le_preview_header' + (index_image)).hide();
+
+      var le_elem = index_image;
+
+      var allowedTypes = ['png', 'jpg', 'jpeg', 'gif'],
+          fileInput = document.querySelector('#oc_platformbundle_advert_imagecontents_' + (index_image) + '_file'),
+          prev = document.querySelector('#le_preview_header' + (index_image));
+
+      fileInput.addEventListener('change', function() {
+
+          console.log(le_elem);
+          $('#le_preview_header' + (le_elem)).show();
+
+          var files = this.files,
+              filesLen = files.length,
+              imgType;
+
+          for (var i = 0; i < filesLen; i++) {
+
+              imgType = files[i].name.split('.');
+              imgType = imgType[imgType.length - 1];
+
+              if (allowedTypes.indexOf(imgType) != -1) {
+                  createThumbnail(files[i],prev);
+              }
+
+          }
+
+      });
+
+
+      var le_preview_click = document.querySelector('#le_preview_header' + (index_image));
+ 
+      le_preview_click.addEventListener('click',function() {
+
+        $('#le_preview_header' + le_elem).cropper({
+            aspectRatio: 16 / 9,
+           // preview:'.le_preview'+ (index_image),
+            viewMode: 1,
+            crop: function(e) {
+              // Output the result data for cropping image.
+              console.log(e.x);
+              console.log(e.y);
+
+              $('#oc_platformbundle_advert_imagecontents_' + (le_elem) + '_startX').val(Math.round(e.x));
+              $('#oc_platformbundle_advert_imagecontents_' + (le_elem) + '_startY').val(Math.round(e.y));
+              $('#oc_platformbundle_advert_imagecontents_' + (le_elem) + '_sizeX').val(Math.round(e.width));
+              $('#oc_platformbundle_advert_imagecontents_' + (le_elem) + '_sizeY').val(Math.round(e.height));
+   
+              console.log(e.width);
+              console.log(e.height);
+              console.log(e.rotate);
+              console.log(e.scaleX);
+              console.log(e.scaleY);
+            }
+          });
+
+      });
+
+      $('#le_croop_header_validate' + (le_elem)).click(function(e) {
+
+         $("le_up_prev" + (le_elem)).cropper('destroy').cropper(options);
+
+        e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+        return false;
+
+       });
+
+      // Enfin, on incrémente le compteur pour que le prochain ajout se fasse avec un autre numéro
+      index_image++;
+    }
+
+    function addPreview_imageLink($prototype_image){
+
+      var nouveauDiv = document.createElement("div");
+      nouveauDiv.id = 'le_up_prev_div';
+
+      var le_preview = document.createElement("img");
+      le_preview.id = 'le_up_prev' + (index_image);
+      le_preview.class = 'le_preview';
+
+      var le_preview_header = document.createElement("div"); 
+      le_preview.id = 'le_preview_header' + (index_image);
+      le_preview.className = 'le_preview';
+
+
+      // Ajout des liens
+      $prototype_image.append(nouveauDiv);
+      $prototype_image.append(le_preview);
+      $prototype_image.append(le_preview_header);
+
+    }
+
+    // La fonction qui ajoute un lien de suppression d'une catégorie
+    function addDelete_imageLink($prototype_image) {
+
+      // Création du lien
+      $validate_imageLink = $('<a href="#" class="btn btn-danger">Validate Image</a>');
+
+      // Ajout du lien
+      $prototype_image.append($validate_imageLink);
+
+      // Création du lien
+      $delete_imageLink = $('<a href="#" class="btn btn-danger">Delete</a>');
+
+      // Ajout du lien
+      $prototype_image.append($delete_imageLink);
+
+      // Ajout du listener sur le clic du lien
+      $delete_imageLink.click(function(e) {
+        $prototype_image.remove();
+        e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+        return false;
+      });
+
+    }
+
+  });
+
+</script>
+
+
+  {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+    {# Les erreurs générales du formulaire. #}
+    {{ form_errors(form) }}
+
+    <div class="form-group">
+      {# Génération du label. #}
+      {{ form_label(form.title, "Titre de l'annonce", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+
+      {# Affichage des erreurs pour ce champ précis. #}
+      {{ form_errors(form.title) }}
+
+      <div class="col-sm-4">
+        {# Génération de l'input. #}
+        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+      </div>
+    </div>
+
+    {# Idem pour un autre champ. #}
+    <div class="form-group">
+      {{ form_label(form.content, "Contenu de l'annonce", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+      {{ form_errors(form.title) }}
+      <div class="col-sm-4">
+        {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+      </div>
+    </div>
+
+  {# Génération du label + error + widget pour un champ #}
+
+ <div class="form-group">
+    {# Génération du label. #}
+    {{ form_label(form.author, "Auteur", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+
+    {# Affichage des erreurs pour ce champ précis. #}
+    {{ form_errors(form.author) }}
+
+    <div class="col-sm-4">
+      {# Génération de l'input. #}
+      {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
+  </div>
+</div>
+
+  {{ form_row(form.imageheader.title) }}
+
+  {{ form_row(form.imageheader.file) }}
+
+  <div class="hidden">
+    {{ form_row(form.imageheader.startX) }}
+    {{ form_row(form.imageheader.startY) }}
+    {{ form_row(form.imageheader.sizeX) }}
+    {{ form_row(form.imageheader.sizeY) }}
+  </div>
+
+    <img class='le_preview' id="le_up_prev" />
+
+  <a href="#" id='le_croop_header_validate' class="btn btn-danger">Validate croop</a>
+
+  <script>
+
+
+    $('#le_up_prev').hide();
+
+    $('#le_up_prev').click(function(e) {
+
+      $('#le_up_prev').cropper({
+          aspectRatio: 16 / 9,
+         // preview:'.le_preview_header',
+          viewMode: 1,
+          crop: function(e) {
+            // Output the result data for cropping image.
+            console.log(e.x);
+            console.log(e.y);
+
+            $('#oc_platformbundle_advert_imageheader_startX').val(Math.round(e.x));
+            $('#oc_platformbundle_advert_imageheader_startY').val(Math.round(e.y));
+            $('#oc_platformbundle_advert_imageheader_sizeX').val(Math.round(e.width));
+            $('#oc_platformbundle_advert_imageheader_sizeY').val(Math.round(e.height));
+
+            console.log(e.width);
+            console.log(e.height);
+            console.log(e.rotate);
+            console.log(e.scaleX);
+            console.log(e.scaleY);
+          }
+        });
+
+    });
+
+    $('#le_croop_header_validate').click(function(e) {
+        $('#le_up_prev').hide();
+        console.log("non!")
+
+        //$('#le_up_prev').src = $('#le_up_prev').cropper.getCroppedCanvas().toDataURL()
+
+         $('#le_up_prev').cropper('destroy');
+
+        e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+        return false;
+    });
+
+
+  </script>
+
+    <br>
+    </br>
+  {# Génération automatique des champs pas encore écrits.
+     Dans cet exemple, ce serait le champ CSRF (géré automatiquement par Symfony !)
+     et tous les champs cachés (type « hidden »). #}
+  {{ form_rest(form) }}
+  
+  {# Pour le bouton, pas de label ni d'erreur, on affiche juste le widget #}
+  {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}}) }}
+  {# Fermeture de la balise <form> du formulaire HTML #}
+  {{ form_end(form) }}
+
+
+    <br>
+    </br>
+
+    <br>
+    </br>

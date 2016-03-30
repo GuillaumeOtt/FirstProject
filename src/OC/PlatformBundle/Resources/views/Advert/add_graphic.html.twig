@@ -1,0 +1,21 @@
+{% extends "OCPlatformBundle::layout.html.twig" %}
+{% block body %}
+
+    <div class="container">
+  	
+	  <h2> {{ 'Ajouter une annonce'|trans }} </h2>
+
+    <hr>
+
+	  {{ include("OCPlatformBundle:Advert:form2.html.twig") }}
+
+	  <p>
+	   {% trans %}
+	    Attention : cette annonce sera ajoutée directement
+	    sur la page d'accueil après validation du formulaire.
+	   {% endtrans %}
+	  </p>
+
+	</div>
+
+{% endblock %}

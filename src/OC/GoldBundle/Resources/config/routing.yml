@@ -1,0 +1,3 @@
+oc_gold_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: OCGoldBundle:Default:index }

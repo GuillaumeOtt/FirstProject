@@ -1,0 +1,110 @@
+{# src/OC/PlatformBundle/Resources/views/Advert/form.html.twig #}
+
+
+<h3>Formulaire d'annonce</h3>
+
+<div class="well">
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+    <img class='le_preview' id="moimoi" src="{{ asset('bundles/ocplatform/images/mamadagirl.jpg') }}" />
+
+    <a href="#" id='le_croop_btn' class="btn btn-danger">Genere croop</a>
+
+
+
+<script>
+  $('#le_croop_btn').click(function(e) {
+
+/*
+        console.log("non!")
+        alert("Vous m'avez cliqué !");
+*/
+
+        $('#moimoi2').src = $('#moimoi').cropper.getCroppedCanvas().toDataURL()
+
+         $('#moimoi').cropper('destroy').cropper(options);
+
+        e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+        return false;
+    });
+</script>
+
+    <div class="le_preview"><img id="moimoi2" src="{{ asset('bundles/ocplatform/images/mamadagirl.jpg') }}" /></div>
+
+          <div class="input-group input-group-sm">
+            <label class="input-group-addon" for="leX">Y</label>
+            <input type="text" class="form-control" id="leX" placeholder="x">
+            <span class="input-group-addon">px</span>
+          </div>
+
+          <div class="input-group input-group-sm">
+            <label class="input-group-addon" for="leY">Y</label>
+            <input type="text" class="form-control" id="leY" placeholder="y">
+            <span class="input-group-addon">px</span>
+          </div>
+
+  {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+    {# Les erreurs générales du formulaire. #}
+    {{ form_errors(form) }}
+
+    <div class="form-group">
+      {# Génération du label. #}
+      {{ form_label(form.title, "Titre de l'annonce", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+
+      {# Affichage des erreurs pour ce champ précis. #}
+      {{ form_errors(form.title) }}
+
+      <div class="col-sm-4">
+        {# Génération de l'input. #}
+        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+      </div>
+    </div>
+
+    {# Idem pour un autre champ. #}
+    <div class="form-group">
+      {{ form_label(form.content, "Contenu de l'annonce", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+      {{ form_errors(form.title) }}
+      <div class="col-sm-4">
+        {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+      </div>
+    </div>
+
+  {# Génération du label + error + widget pour un champ #}
+  {{ form_row(form.date) }}
+
+  {{ form_row(form.author) }}
+  {{ form_row(form.published) }}
+
+  {{ form_row(form.imageheader.title) }}
+  {{ form_row(form.imageheader.file) }}
+
+  <div class="hidden">
+    {{ form_row(form.imageheader.startX) }}
+    {{ form_row(form.imageheader.startY) }}
+    {{ form_row(form.imageheader.sizeX) }}
+    {{ form_row(form.imageheader.sizeY) }}
+  </div>
+
+
+  <div id="le_up_prev_div"></div>
+
+    <img class='le_preview' id="le_up_prev" />
+
+    <div class="le_preview_header"></div>
+    
+
+  <a href="#" id='le_croop_header_validate' class="btn btn-danger">Validate croop</a>
+
+  {# Génération automatique des champs pas encore écrits.
+     Dans cet exemple, ce serait le champ CSRF (géré automatiquement par Symfony !)
+     et tous les champs cachés (type « hidden »). #}
+  {{ form_rest(form) }}
+  
+  {# Pour le bouton, pas de label ni d'erreur, on affiche juste le widget #}
+  {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}}) }}
+  {# Fermeture de la balise <form> du formulaire HTML #}
+  {{ form_end(form) }}
+</div>

@@ -1,0 +1,60 @@
+{# src/OC/PlatformBundle/Resources/view/Advert/view.html.twig #}
+
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+  Lecture d'une annonce - {{ parent() }}
+{% endblock %}
+
+{% block ocplatform_body %}
+
+  <h2>{{ advert.title }}</h2>
+  <i>Par {{ advert.author }}</i>
+
+{#, le {{ advert.date|date('d/m/Y') }} 
+
+{% set runtimeConfig = {"thumbnail": { "size": [advert.imageheader.sizeX, advert.imageheader.sizeY], "start": [advert.imageheader.startX, advert.imageheader.startY]}} %}
+
+#}
+
+{% set runtimeConfig = {"crop": { "size": [advert.imageheader.sizeX, advert.imageheader.sizeY], "start": [advert.imageheader.startX, advert.imageheader.startY]}} %}
+
+<img 
+  src="{{ ( advert.imageheader.webPath)|imagine_filter('my_thumb2',runtimeConfig)}}"
+  alt="{{ advert.imageheader.alt }}"
+/>
+
+  <div class="well">
+    {{ advert.content }}
+  </div>
+  
+  {% for image in advert.imagecontents %}
+    <a>
+
+      {% set runtimeConfigC = {"crop": { "size": [image.sizeX, image.sizeY], "start": [image.startX, image.startY]}} %}
+
+      <img 
+        src="{{ asset(image.webPath)|imagine_filter('my_thumb2',runtimeConfigC)}}"
+        alt="{{ image.alt }}"
+      />
+    </a>
+  {% endfor %}
+
+  <p>
+    <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      Retour à la liste
+    </a>
+    <a href="{{ path('oc_platform_edit', {'id': advert.id}) }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-edit"></i>
+      Modifier l'annonce
+    </a>
+   
+    <a href="{{ path('oc_platform_delete', {'id': advert.id}) }}" class="btn btn-danger">
+      <i class="glyphicon glyphicon-trash"></i>
+      Supprimer l'annonce
+    </a>
+  </p>
+
+
+{% endblock %}

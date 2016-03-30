@@ -1,0 +1,28 @@
+oc_gold:
+    resource: "@OCGoldBundle/Resources/config/routing.yml"
+    prefix:   /
+
+gott_platform:
+    resource: "@OCPlatformBundle/Resources/config/routing.yml"
+    prefix: /{_locale}/platform
+    requirements:
+        _locale: en|fr
+
+menu_platform:
+    resource: "@OCMenuBundle/Resources/config/routing.yml"
+    prefix: /{_locale}/platform
+    requirements:
+        _locale: en|fr
+
+user_platform:
+    resource: "@OCUserBundle/Resources/config/routing.yml"
+    prefix: /{_locale}/platform
+    requirements:
+        _locale: en|fr
+   
+oc_platform_translation:
+    path:     /traduction/{name}
+    defaults: { _controller: OCPlatformBundle:Advert:translation }
+
+_liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.xml"
